@@ -1,8 +1,5 @@
 #include<iostream>
 #include<fstream>
-#define HASHSIZE 1
-#define VOWEL 4
-#define CONSONANT 1
 using namespace std;
 #include "kv.cc"
 

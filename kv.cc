@@ -1,3 +1,6 @@
+#define HASHSIZE 1
+#define VOWEL 4
+#define CONSONANT 1
 class kv{
 public:
 	struct pair{
