@@ -3,11 +3,16 @@
 using namespace std;
 #include "kv.cc"
 
+/*
+ * Return codes:
+ * 1: File not found
+ */
 int main(int argc, char* argv[]){
 	int argcount=0;
 	string fname = "";
 	if(argc<2){
 		cout<<"Too few arguments."<<endl;
+		return 1;
 	} else{
 		argcount = argc-2;
 	}
@@ -25,7 +30,7 @@ int main(int argc, char* argv[]){
 		if(line[0] == '#'){
 			subline = line.substr(1,7);
 		}
-		if(subline == "DEFINE"){
+		if(subline == "DEFINE" || subline == "define"){
 			subline = line.substr(8, line.length());
 			val = "";
 			asn = "";
@@ -38,6 +43,13 @@ int main(int argc, char* argv[]){
 				}
 				else{
 					asn+=c;
+				}
+			}
+			if(line.find("$#")&&line[0]!='#'){
+				if(line.find("#$")){
+					for(int i = line.find("$#"); i<line.find("#$"); i++){
+						asn += line[i];
+					}
 				}
 			}
 			kvpairs.insert(val, asn);
