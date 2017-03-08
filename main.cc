@@ -12,11 +12,11 @@ public:
 		string value;
 		pair* next;
 		pair* prev;
-	}
+	};
 	pair * listofpairs[HASHSIZE];
 	char vow[12] = {'a','e','i','o','u','y','A','E','I','O','U','Y'};
 	int hash(string key){
-		sum = 0;
+		int sum = 0;
 		bool got = false;
 		for(char c : key){
 			for(char d : vow){
@@ -35,7 +35,7 @@ public:
 		if(listofpairs[hashindex] == NULL){
 			listofpairs[hashindex] = new pair;
 			listofpairs[hashindex]->key=key;
-			listofpairs[hashindex]->value=value;
+			listofpairs[hashindex]->value=val;
 			listofpairs[hashindex]->next=nullptr;
 			listofpairs[hashindex]->prev=nullptr;
 		} else {
@@ -47,7 +47,7 @@ public:
 			current -> next -> prev = current;
 			current = current -> next;
 			current -> key = key;
-			current -> value = value;
+			current -> value = val;
 		}
 	}
 	string grab(string key){
@@ -60,18 +60,18 @@ public:
 				current = current->next;
 			}
 			if(current->key == key){
-				return key;
+				return current->value;
 			} else {
 				return "";
 			}
 		}
 	}
-}
+};
 
 int main(int argc, char* argv[]){
 	int argcount=0;
-	string fname;
-	if(argv<2){
+	string fname = "";
+	if(argc<2){
 		cout<<"Too few arguments."<<endl;
 	} else{
 		argcount = argc-2;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
 	string line;
 	string subline;
 	kv kvpairs;
-	bool val = true;
+	bool valfound = true;
 	string val = ""; //value of key
 	string asn = ""; //assignment of key
 	while(!javasource.eof()){
@@ -96,9 +96,9 @@ int main(int argc, char* argv[]){
 			asn = "";
 			for(char c : subline){
 				if(c == '='){
-					val = false;
+					valfound = false;
 				}
-				else if(val){
+				else if(valfound){
 					val+=c;
 				}
 				else{
