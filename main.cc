@@ -3,6 +3,28 @@
 using namespace std;
 #include "kv.cc"
 
+void parseline(string line, kv &pairs){
+	size_t lsfind = line.find("$#");
+	size_t rsfind = line.find("#$");
+	string asn = "";
+	string newline = "";
+	if(lsfind!=string::npos&&line[0]!='#'&&rsfind!=string::npos){
+		asn = "";
+		for(int i = 0; i<lsfind && i<line.length(); i++){
+			newline+=line[i];
+		}
+		for(int i = lsfind+2; i<rsfind && i<line.length(); i++){
+			asn += line[i];
+		}
+		newline+=pairs.grab(asn);
+		for(int i = rsfind+2; i<line.length(); i++){
+			newline+=line[i];
+		}
+		parseline(newline, pairs);
+	}
+	else cout<<line<<endl;
+}
+
 /*
  * Return codes:
  * 1: File not found
@@ -22,7 +44,7 @@ int main(int argc, char* argv[]){
 	string line;
 	string subline;
 	kv kvpairs;
-	bool valfound = true;
+	bool valnfound = true;
 	string val = ""; //value of key
 	string asn = ""; //assignment of key
 	int lsfind = 0;
@@ -38,9 +60,9 @@ int main(int argc, char* argv[]){
 			asn = "";
 			for(char c : subline){
 				if(c == '='){
-					valfound = false;
+					valnfound = false;
 				}
-				else if(valfound){
+				else if(valnfound){
 					val+=c;
 				}
 				else{
@@ -48,29 +70,10 @@ int main(int argc, char* argv[]){
 				}
 			}
 			kvpairs.insert(val,asn);
-			subline = "";
-			continue;
 		}
-		size_t lsfind = line.find("$#");
-		size_t rsfind = line.find("#$");
-		if(lsfind!=string::npos&&line[0]!='#'&&rsfind!=string::npos){
-			asn = "";
-			for(int i = 0; i<lsfind && i<line.length(); i++){
-				cout<<line[i];
-			}
-			if(line.find("#$")){
-				for(int i = lsfind+2; i<rsfind && i<line.length(); i++){
-					asn += line[i];
-				}
-				cout<<kvpairs.grab(asn);
-				
-			}
-			for(int i = rsfind+2; i<line.length(); i++){
-				cout<<line[i];
-			}
-		}
-		else cout<<line<<endl;
+		else parseline(line, kvpairs);
 		subline = "";
+		valnfound = true;
 	}
 	return 0;
 }
