@@ -1,0 +1,5 @@
+cmake_minimum_required (VERSION 3.1.0 FATAL_ERROR)
+project (javaPre)
+add_executable(javaPre main.cc)
+set_property(TARGET javaPre PROPERTY CXX_STANDARD 11)
+set_property(TARGET javaPre PROPERTY CXX_STANDARD_REQUIRED ON)

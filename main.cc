@@ -45,15 +45,16 @@ int main(int argc, char* argv[]){
 					asn+=c;
 				}
 			}
-			if(line.find("$#")&&line[0]!='#'){
-				if(line.find("#$")){
-					for(int i = line.find("$#"); i<line.find("#$"); i++){
-						asn += line[i];
-					}
-				}
-			}
-			kvpairs.insert(val, asn);
 		}
+		if(line.find("$#")&&line[0]!='#'){
+			if(line.find("#$")){
+				for(int i = line.find("$#"); i<line.find("#$"); i++){
+					asn += line[i];
+				}
+				
+			}
+		}
+		kvpairs.insert(val, asn);
 	}
 	return 0;
 }
