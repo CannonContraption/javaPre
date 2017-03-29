@@ -25,10 +25,12 @@ int main(int argc, char* argv[]){
 	bool valfound = true;
 	string val = ""; //value of key
 	string asn = ""; //assignment of key
-	while(!javasource.eof()){
+	int lsfind = 0;
+	int rsfind = 0;
+	while(!javasource.eof() && !javasource.fail()){
 		getline(javasource, line);
-		if(line[0] == '#'){
-			subline = line.substr(1,7);
+		if(line[0] == '#' && line.size()>7){
+			subline = line.substr(1,6);
 		}
 		if(subline == "DEFINE" || subline == "define"){
 			subline = line.substr(8, line.length());
@@ -45,16 +47,30 @@ int main(int argc, char* argv[]){
 					asn+=c;
 				}
 			}
+			kvpairs.insert(val,asn);
+			subline = "";
+			continue;
 		}
-		if(line.find("$#")&&line[0]!='#'){
+		size_t lsfind = line.find("$#");
+		size_t rsfind = line.find("#$");
+		if(lsfind!=string::npos&&line[0]!='#'&&rsfind!=string::npos){
+			asn = "";
+			for(int i = 0; i<lsfind && i<line.length(); i++){
+				cout<<line[i];
+			}
 			if(line.find("#$")){
-				for(int i = line.find("$#"); i<line.find("#$"); i++){
+				for(int i = lsfind+2; i<rsfind && i<line.length(); i++){
 					asn += line[i];
 				}
+				cout<<kvpairs.grab(asn);
 				
 			}
+			for(int i = rsfind+2; i<line.length(); i++){
+				cout<<line[i];
+			}
 		}
-		kvpairs.insert(val, asn);
+		else cout<<line<<endl;
+		subline = "";
 	}
 	return 0;
 }
