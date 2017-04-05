@@ -52,9 +52,9 @@ int main(int argc, char* argv[]){
 	while(!javasource.eof() && !javasource.fail()){
 		getline(javasource, line);
 		if(line[0] == '#' && line.size()>7){
-			subline = line.substr(1,6);
+			subline = line.substr(1,5);
 		}
-		if(subline == "DEFINE" || subline == "define"){
+		if(subline == "DEFIN" || subline == "defin"){
 			subline = line.substr(8, line.length());
 			val = "";
 			asn = "";
@@ -70,7 +70,18 @@ int main(int argc, char* argv[]){
 				}
 			}
 			kvpairs.insert(val,asn);
-		}
+		} else if(subline == "IFDEF" || subline == "ifdef"){
+			subline = line.substr(7, line.length());
+			cout<<subline<<endl;
+			if(kvpairs.grab(subline) != ""){
+				//leave the code in place
+				if(line.substr(1,5)!="ENDIF" && line.substr(1,5)!="endif"){}
+			} else {
+				while(line.length()>5 &&(line.substr(1,5) != "endif" || line.substr(1,5) != "ENDIF")){
+					getline(javasource, line);
+				}
+			}
+		} else if(subline == "ENDIF"||subline=="endif"){}
 		else parseline(line, kvpairs);
 		subline = "";
 		valnfound = true;
