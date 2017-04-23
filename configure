@@ -1,0 +1,100 @@
+#!/bin/bash
+
+#Project Details
+NAME="javaPre"
+MAIN="main.cc"
+USEBUILDDIR="yes"
+BUILDDIRNAME="build"
+REQUIREINCLUDES="no" #set if you use any non-STL libraries
+INCLUDES=("") #names of any includes. Example: gtkmm-3.0
+#This should be the pkg-config name, so that it can be searched for.
+#Note that each package should be enclosed in quotes, space separated
+
+#CannonConfigure internal variables. Edit if you need to change compiler
+versionnumber=0.0.1
+cppcompilers=(g++ c++ x86_64-w64-mingw32-g++ i686-w64-mingw32-g++ clang++)
+ccompilers=(gcc clang cc x86_64-mingw32-gcc i686-w64-mingw32-gcc)
+
+echo "CannonConfigure ./configure script, version $versionnumber"
+
+chosencompiler="errornocompile"
+compilersequence="errornocompile"
+
+for i in $cppcompilers
+do
+	which $i > /dev/null 2>&1
+	if [ $? = 0 ]; then
+		chosencompiler=$i
+		break
+	fi
+done
+
+if [ $chosencompiler = "errornocompile" ]; then
+	echo -e "\033[1;31mERROR: No suitable C++ compiler found.\033[m"
+	echo "Please install a compiler from this list, or specify your own in the ./configure script."
+	for i in $cppcompilers
+	do
+		echo $i
+	done
+	exit
+else
+	echo -e "\033[32mFound $chosencompiler\033[m"
+fi
+
+echo -e "\033[33mChecking required source files...\033[m"
+if [[ -f $MAIN ]]; then
+	echo -e "\033[32mFound $MAIN.\033[m"
+else
+	echo -e "\007\033[1;31mSOURCE CODE ABSENT.\033[m"
+	echo "Please ensure that $MAIN exists and you have permissions to read it."
+	exit 1
+fi
+
+if [ $REQUIREINCLUDES = "yes" ]; then
+	for i in $INCLUDES
+	do
+		pkg-config $i
+		if [ $? = 0 ]; then
+			echo -e "Found $i"
+		else
+			echo -e "\007\033[31m$i NOT FOUND.\033[m"
+			echo "make sure all the associated libs are installed correctly."
+		fi
+	done
+fi
+
+if [ $USEBUILDDIR = "yes" ]; then
+	if [[ -d "$BUILDDIRNAME" ]]; then
+		echo -e "\033[32mWe have a build dir\033[m"
+	else
+		echo -e "\033[33mCreating build dir...\033[m"
+		mkdir "$BUILDDIRNAME"
+		if [[ -d "$BUILDDIRNAME" ]]; then
+			echo -e "\033[32mSUCCESS\033[m"
+		else
+			echo -e "\007\033[31mBUILD DIR CREATION FAILED!\033[m"
+			echo "make sure you have the proper permissions to access this folder."
+		fi
+	fi
+	cd "$BUILDDIRNAME"
+	MAIN="../$MAIN"
+fi
+
+compilersequence="$chosencompiler $MAIN -o $NAME"
+
+touch Makefile
+echo "$NAME: $MAIN
+	$compilersequence
+
+default: $MAIN
+	$compilersequence" > Makefile
+
+echo -e "\033[1;32mConfigure complete.\033[m"
+echo "You may now make the project. To do so, type: 
+"
+if [ $USEBUILDDIR = "yes" ]; then
+	echo "cd $BUILDDIRNAME"
+fi
+echo "make
+
+and the project will build itself."
