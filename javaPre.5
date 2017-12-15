@@ -1,0 +1,22 @@
+.TH JAVAPRE 1
+.SH NAME
+javaPre \- preprocess java source files in a C-style way
+.SH DESCRIPTION
+.B javaPre
+takes a java input file, and performs basic preprocessing tasks on Java files.
+.in +4n
+.SS #DEFINE syntax
+.PP
+#DEFINE (variable)=(value)
+
+Sets the value of the preprocessor variable name.
+
+.SS Using Varialbes
+.PP
+$#(variable)#$
+
+Enclose the variable name in $# and #$ to place its value in that spot in the source code.
+.SH SEE ALSO
+javac(1), javaPre(1)
+.SH AUTHOR
+Jim Read (jimmydean886@hotmail.com)
